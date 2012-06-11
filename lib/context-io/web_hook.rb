@@ -45,7 +45,7 @@ module ContextIO
     #
     # @return [Hash] The server response
     def create
-      post("/2.0/accounts/#{@account_id}/webhooks", @raw_data)
+      assign_id(post("/2.0/accounts/#{@account_id}/webhooks", @raw_data))
     end
 
     # @api public
@@ -65,6 +65,28 @@ module ContextIO
       get("/2.0/accounts/#{account_id}/webhooks", query).map do |raw_data|
         ContextIO::WebHook.new(account_id, raw_data)
       end
+    end
+
+    # @api public
+    #
+    # @return [ContextIO::WebHook] Find a webhook by id.
+    def self.find(account, webhook_id, query={})
+      account_id = account.respond_to?(:id) ? account.id : account.to_s
+      raw_data = get("/2.0/accounts/#{account_id}/webhooks/#{webhook_id}", query)
+
+      ContextIO::WebHook.new(account_id, raw_data)
+    end
+
+    private
+
+    # @api private
+    #
+    # Parse the server response and assign the webhook_id to the instance
+    #
+    # @return [Hash] The server response
+    def assign_id(response)
+      @raw_data['webhook_id'] = response['webhook_id']
+      response
     end
   end
 end
