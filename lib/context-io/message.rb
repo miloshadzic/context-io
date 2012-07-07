@@ -29,7 +29,9 @@ module ContextIO
     # @return [Array<Hash>] Information about people CC-ed on the email.
     #   Possible keys are `:email`, `:name` and `:thumbnail`. All values are
     #   Strings.
-    attr_reader :cc
+    def cc
+      @cc ||= []
+    end
 
     # @api public
     # @return [Array<ContextIO::Source>] The sources the message is connected
@@ -237,7 +239,7 @@ module ContextIO
     def move(folder_name, destination_source = nil)
       copy_move(folder_name, true, destination_source)
     end
-      
+
     private
     def url
       "/2.0/accounts/#{account_id}/messages/#{message_id}"
